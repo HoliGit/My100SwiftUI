@@ -26,6 +26,7 @@ struct AstronautView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: geometry.size.width)
+                    .accessibility(hidden: true) //day76 challenge3
                     
                     Text(self.astronaut.description)
                         .padding()
