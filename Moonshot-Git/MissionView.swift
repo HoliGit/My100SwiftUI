@@ -25,6 +25,7 @@ struct MissionView: View {
                         .scaledToFit()
                         .frame(maxWidth: geometry.size.width * 0.7)
                         .padding(.top)
+                    .accessibility(hidden: true) //day76 challenge3
                     
                     //challenge 1: add launch date below mission badge
                     Text("Launch date: \(self.mission.formattedLaunchDate)")
