@@ -39,6 +39,8 @@ struct ContentView: View {
                     Stepper(value: $sleepAmount, in: 4...12, step: 0.50) {
                         Text("\(sleepAmount, specifier: "%g") hours")
                     }
+                    //day76 challenge2 accessibility
+                    .accessibility(value: Text("\(sleepAmount, specifier: "%g") hours"))
                 }
                 
                 
