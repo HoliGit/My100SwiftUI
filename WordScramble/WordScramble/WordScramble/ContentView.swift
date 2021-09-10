@@ -48,9 +48,20 @@ struct ContentView: View {
                 //uniquely identified by the word itself
                 //and placed at the top position 0
                 
-                List(usedWords, id: \.self) {
+                //Edited for accessibility: create explicit Hstack for VoiceOver
+                
+                /*List(usedWords, id: \.self) {
                     Image(systemName: "\($0.count).circle")
                     Text($0)
+                }*/
+                
+                List(usedWords, id\.self) {
+                    HStack{
+                       Image(sistemName: "\(word.count).circle")
+                        Text(word)
+                    }
+                    .accessibilityElement(children: .ignore)
+                    .accessibility(label: Text("\(word), \(word.count) letters"))
                 }
                 
                 Text("SCORE: \(score)")
