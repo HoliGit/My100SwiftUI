@@ -165,7 +165,7 @@ struct ContentView: View {
     func loadImage() {
         guard let inputImage = inputImage else { return }
         
-        let beginImage = CIImage(image: inputImage)
+        let beginImage = CIImage(image: inputImage, options: [CCImageOption.applyOrientationProperty: true])
         currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
         applyProcessing()
     }
@@ -186,7 +186,7 @@ struct ContentView: View {
         else { return }
         
         if let cgimg = context.createCGImage(outputImage, from: outputImage.extent) {
-            let uiImage = UIImage(cgImage: cgimg)
+            let uiImage = UIImage(cgImage: cgimg, scale: 1, orientation: inputImage?.imageOrientation ?? .up)
             image = Image(uiImage: uiImage)
             processedImage = uiImage
         }
