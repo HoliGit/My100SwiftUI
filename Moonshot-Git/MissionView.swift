@@ -17,15 +17,27 @@ struct MissionView: View {
     let astronauts: [CrewMember]
     
     var body: some View {
-        GeometryReader { geometry in
-            ScrollView(.vertical){
+        GeometryReader { fullView in
+            ScrollView(.vertical) {
                 VStack {
-                    Image(self.mission.image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: geometry.size.width * 0.7)
-                        .padding(.top)
-                    .accessibility(hidden: true) //day76 challenge3
+                    //Day 94 challenge 1
+                    GeometryReader { geo in
+                        HStack {
+                            Spacer()
+                            
+                            VStack {
+                                Image(decorative: self.mission.image)
+                                    .resizable()
+                                    .scaledToFit()
+                            }
+                            .frame(minWidth: fullView.size.width * 0.7)
+                            .scaleEffect(calculateScale(geo: geo), anchor: .bottom)
+                            
+                            Spacer()
+                        }
+                    }
+                    .frame(minWidth: fullView.size.width, minHeight: fullView.size.width * 0.7)
+
                     
                     //challenge 1: add launch date below mission badge
                     Text("Launch date: \(self.mission.formattedLaunchDate)")
@@ -83,6 +95,14 @@ struct MissionView: View {
         }
         self.astronauts = matches
     }
+    
+    //day 94 challenge 1
+    private func calculateScale(geo: GeometryProxy) -> CGFloat {
+            return ((geo.frame(in: .global).midY * 2) /
+                geo.frame(in: .local).height) > 0.8 ?
+                0.8 :
+                max((geo.frame(in: .global).midY * 2) / geo.frame(in: .local).height, 0.4)
+        } 
 }
 
 struct MissionView_Previews: PreviewProvider {
