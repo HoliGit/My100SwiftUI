@@ -27,6 +27,7 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
+            GeometryReader { full in
             VStack {
                 
                 Text("Make as many words you can out of these 8 characters - no cheating!")
@@ -44,36 +45,32 @@ struct ContentView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .autocapitalization(.none)
                     .padding()
-                //create a row for each word in the array
-                //uniquely identified by the word itself
-                //and placed at the top position 0
-                
-                //Edited for accessibility: create explicit Hstack for VoiceOver
-                
-                /*List(usedWords, id: \.self) {
-                    Image(systemName: "\($0.count).circle")
-                    Text($0)
-                }*/
-                
-                List(usedWords, id\.self) {
-                    HStack{
-                       Image(sistemName: "\(word.count).circle")
-                        Text(word)
+               
+                //with accessibility, make list HStack esplicit
+                List(usedWords, id: \.self) { word in
+                    VStack {
+                        GeometryReader { geo in
+                            HStack {
+                                Image(systemName: "\(word.count).circle")
+                                    .foregroundColor(setColour(itemGeo: geo, fullGeo: full))
+                                Text(word)
+                            }
+                            .offset(x: calcOffsetX(itemGeo: geo, fullGeo: full), y: 0)
+                        } //geom
+                        .frame(height: 25)
                     }
                     .accessibilityElement(children: .ignore)
                     .accessibility(label: Text("\(word), \(word.count) letters"))
-                }
-                
+                } //list
                 Text("SCORE: \(score)")
                     .padding()
                     .font(.largeTitle)
                     .foregroundColor(.blue)
                     .shadow(color: .black, radius: 0.5)
-                
-            
             }
             
             .navigationBarTitle("WORD SCRAMBLE")
+            
             .padding()
             .navigationBarItems(trailing: Button(action: startGame) {
                 Text("Start new game")
@@ -87,7 +84,31 @@ struct ContentView: View {
             }
             
         }
+      }
+        
     }
+    
+    // Day 94 Calculate offset for slide right to left effect when scrolling
+    func calcOffsetX(itemGeo: GeometryProxy, fullGeo: GeometryProxy) -> CGFloat {
+        let midY = (itemGeo.frame(in: .global).midY) - 26.5
+        let listHeight = fullGeo.frame(in: .local).size.height
+        let scrollFactor = midY / listHeight
+        let width = itemGeo.frame(in: .local).size.width
+        let position = (scrollFactor * width) - 250//130
+        return position > 0 ? position : 0
+    }
+    
+    //Day 94 change color with sliding
+    func setColour(itemGeo: GeometryProxy, fullGeo: GeometryProxy) -> Color {
+        let midY = (itemGeo.frame(in: .global).midY) - 26.5
+        let listHeight = fullGeo.frame(in: .local).size.height
+        let scrollFactor = Double(midY / listHeight)
+        
+        
+        return Color(.sRGB, red: 1.0 - scrollFactor, green: scrollFactor, blue: 1.0, opacity: 1.0)
+    }
+    
+    
     
     func addNewWord() {
         let answer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
